@@ -1,0 +1,7 @@
+Features:
+
+Painting and erasing on canvas
+Joining rooms and seeing everything that has been drawn before
+A settable nickname to be displayed on the sidebar for the whole room to see
+One person is the room admin and they can erase the whole board
+When admin leaves the room the new admin is decided by order of joining the room
