@@ -1,0 +1,14 @@
+{
+  "name": "paintonline",
+  "version": "1.0.0",
+  "description": "A web app for drawing on a canvas with other people",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "author": "Karol Orszulik",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
