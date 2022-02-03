@@ -13,14 +13,19 @@ const io = socket(server)
 
 let clientsNicknames = {}
 
+let roomsClients = {}
 
 io.sockets.on('connection', (socket) => {
 
     const newID = generateRoomID(4)
     console.log(`New connection with ID: ${socket.id}; Assigning room ID: ${newID}`)
+    roomsClients[newID] = new Set().add(socket.id)
     socket.emit('new-room-id', {id:newID})
 
     clientsNicknames[socket.id] = 'Joe Generic'
+
+    console.log(clientsNicknames)
+    console.log(roomsClients)
 
     socket.on('changed-nickname', (data) => {
         clientsNicknames[socket.id] = data.newNickname
