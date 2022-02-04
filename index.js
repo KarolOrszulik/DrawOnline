@@ -12,24 +12,57 @@ const io = socket(server)
 
 
 let clientsNicknames = {}
-
-let roomsClients = {}
+clientsNicknames.log = () => console.log(`Clients-nicknames dict: ${JSON.stringify(clientsNicknames)}`)
 
 io.sockets.on('connection', (socket) => {
 
     const newID = generateRoomID(4)
     console.log(`New connection with ID: ${socket.id}; Assigning room ID: ${newID}`)
-    roomsClients[newID] = new Set().add(socket.id)
     socket.emit('new-room-id', {id:newID})
+
+    socket.join(newID)
+
+    socket.room = newID
 
     clientsNicknames[socket.id] = 'Joe Generic'
 
-    console.log(clientsNicknames)
-    console.log(roomsClients)
+    clientsNicknames.log()
 
     socket.on('changed-nickname', (data) => {
         clientsNicknames[socket.id] = data.newNickname
         console.log(`Socket ${socket.id} now has nickname: ${data.newNickname}`)
+        clientsNicknames.log()
+    })
+
+    socket.on('join-room-request', (data) => {
+        const roomToJoinExists = socket.adapter.rooms.has(data.roomToJoin)
+        if(roomToJoinExists) {
+            console.log(`Client ${socket.id} wants to join an EXISTING room ${data.roomToJoin}`)
+
+            const othersInRoom = Array.from(socket.adapter.rooms.get(data.roomToJoin).values())
+                                      .map(x => clientsNicknames[x])
+
+            socket.leave(socket.room)
+            socket.room = data.roomToJoin
+            socket.join(socket.room)
+
+            socket.emit('join-room-greenlight', {roomToJoin:data.roomToJoin, othersInRoom})
+        }
+        else {
+            console.log(`Client ${socket.id} wants to join an NON-EXISTING room ${data.roomToJoin}`)
+            socket.emit('join-room-error', {})
+        }
+    })
+
+    socket.on('disconnect', (data) => {
+        console.log(`${socket.id} a.k.a. ${clientsNicknames[socket.id]} disconnected`)
+
+        // for (const [room, clients] of Object.entries(roomsClients)) {
+        //     clients.delete(socket.id)
+        //     if(clients.size == 0) {
+        //         roomsClients[room].delete()
+        //     }
+        // }
     })
 
 })

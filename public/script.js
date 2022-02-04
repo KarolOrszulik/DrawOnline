@@ -7,16 +7,25 @@ socket.on('new-room-id', (data) => {
     document.getElementById('room-id').innerText = data.id
 })
 
-// when new nickname buttons is pressed
+socket.on('join-room-greenlight', (data) => {
+    document.getElementById('room-id').innerText = data.roomToJoin
+    console.log(data.othersInRoom)
+})
+
+// when new nickname button is pressed
 // change the displayed nickname and
 // emit the change to the server
 document.getElementById('nickname-btn').onclick = () => {
     const newNickname = document.getElementById('nickname-input').value
     if(newNickname != '') {
         document.getElementById('nickname').innerText = newNickname
+        socket.emit('changed-nickname', {newNickname})
     }
-    
-    socket.emit('changed-nickname', {newNickname})
+}
+
+document.getElementById('join-room-btn').onclick = () => {
+    const roomToJoin = document.getElementById('join-room-input').value
+    socket.emit('join-room-request', {roomToJoin})
 }
 
 function setup() {
