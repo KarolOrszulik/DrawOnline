@@ -37,16 +37,16 @@ io.sockets.on('connection', (socket) => {
     socket.on('join-room-request', (data) => {
         const roomToJoinExists = socket.adapter.rooms.has(data.roomToJoin)
         if(roomToJoinExists) {
-            console.log(`Client ${socket.id} wants to join an EXISTING room ${data.roomToJoin}`)
-
-            const othersInRoom = Array.from(socket.adapter.rooms.get(data.roomToJoin).values())
-                                      .map(x => clientsNicknames[x])
+            console.log(`Client ${socket.id} wants to join an EXISTING room ${data.roomToJoin}`) 
 
             socket.leave(socket.room)
             socket.room = data.roomToJoin
             socket.join(socket.room)
 
-            socket.emit('join-room-greenlight', {roomToJoin:data.roomToJoin, othersInRoom})
+            const nicknamesInRoom = Array.from(socket.adapter.rooms.get(data.roomToJoin).values())
+                                      .map(x => clientsNicknames[x])
+
+            socket.emit('join-room-greenlight', {roomToJoin:data.roomToJoin, nicknamesInRoom})
         }
         else {
             console.log(`Client ${socket.id} wants to join an NON-EXISTING room ${data.roomToJoin}`)

@@ -9,7 +9,7 @@ socket.on('new-room-id', (data) => {
 
 socket.on('join-room-greenlight', (data) => {
     document.getElementById('room-id').innerText = data.roomToJoin
-    console.log(data.othersInRoom)
+    console.log(data.nicknamesInRoom)
 })
 
 // when new nickname button is pressed
