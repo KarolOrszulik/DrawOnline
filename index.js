@@ -10,10 +10,7 @@ app.use(express.static('public'))
 const socket = require('socket.io')
 const io = socket(server)
 
-setInterval(() => {
-    io.emit('update-user-count', {userCount})
-    console.log('Emitting user count')}
-    , 5000)
+setInterval(() => {io.emit('update-user-count', userCount)}, 5000)
 
 let userCount = 0
 
@@ -36,7 +33,7 @@ io.sockets.on('connection', (socket) => {
     socket.emit('init', {id:newID, nickname:newNickname, userCount})
 
     socket.on('changed-nickname', (newNickname) => {
-        clientsNicknames[socket.id] = data.newNickname
+        clientsNicknames[socket.id] = newNickname
         console.log(`Socket ${socket.id} now has nickname: ${newNickname}`)
         clientsNicknames.log()
     })
@@ -63,6 +60,7 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('disconnect', (data) => {
         userCount--
+        delete clientsNicknames[socket.id]
         console.log(`${socket.id} a.k.a. ${clientsNicknames[socket.id]} disconnected`)
     })
 
