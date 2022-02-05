@@ -16,17 +16,19 @@ clientsNicknames.log = () => console.log(`Clients-nicknames dict: ${JSON.stringi
 
 io.sockets.on('connection', (socket) => {
 
-    const newID = generateRoomID(4)
-    console.log(`New connection with ID: ${socket.id}; Assigning room ID: ${newID}`)
-    socket.emit('new-room-id', {id:newID})
+    const newID = generateRoomID(4, Array.from(socket.adapter.rooms.keys()))
+    const newNickname = generateNewNickname()
 
-    socket.join(newID)
-
-    socket.room = newID
+    console.log(`New socket ID: ${socket.id}; Room ID: ${newID}; Nickname: ${newNickname}`)
 
     clientsNicknames[socket.id] = 'Joe Generic'
+    socket.room = newID
+    socket.join(socket.room)
 
-    clientsNicknames.log()
+    socket.emit('init', {id:newID, nickname:newNickname})
+
+
+
 
     socket.on('changed-nickname', (data) => {
         clientsNicknames[socket.id] = data.newNickname
@@ -44,7 +46,7 @@ io.sockets.on('connection', (socket) => {
             socket.join(socket.room)
 
             const nicknamesInRoom = Array.from(socket.adapter.rooms.get(data.roomToJoin).values())
-                                      .map(x => clientsNicknames[x])
+                                         .map(x => clientsNicknames[x])
 
             socket.emit('join-room-greenlight', {roomToJoin:data.roomToJoin, nicknamesInRoom})
         }
@@ -56,23 +58,30 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('disconnect', (data) => {
         console.log(`${socket.id} a.k.a. ${clientsNicknames[socket.id]} disconnected`)
-
-        // for (const [room, clients] of Object.entries(roomsClients)) {
-        //     clients.delete(socket.id)
-        //     if(clients.size == 0) {
-        //         roomsClients[room].delete()
-        //     }
-        // }
     })
 
 })
 
 const generateRoomID = (length, taken) => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    let result = ""
 
-    for(let i = 0; i < length; i++) {
-        result += characters[Math.floor(Math.random()*characters.length)]
-    }
+    do {
+        var result = ""
+
+        for(let i = 0; i < length; i++) {
+            result += characters[Math.floor(Math.random()*characters.length)]
+        }
+
+    } while(taken.includes(result))
+    
+    
     return result
+}
+
+const generateNewNickname = () => {
+    const adjectives = ['Big', 'Small']
+    const nouns = ['Alice', 'Bob']
+
+    return adjectives[Math.floor(Math.random()*adjectives.length)]
+           + " " + nouns[Math.floor(Math.random()*nouns.length)]
 }

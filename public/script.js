@@ -3,8 +3,9 @@ const socket = io("http://localhost:3000")
 // upon recieving the ID of a new room
 // when connecting for the first time,
 // show the new ID
-socket.on('new-room-id', (data) => {
+socket.on('init', (data) => {
     document.getElementById('room-id').innerText = data.id
+    document.getElementById('nickname').innerText = data.nickname
 })
 
 socket.on('join-room-greenlight', (data) => {
