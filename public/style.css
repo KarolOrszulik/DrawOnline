@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
 
+/* probably not very good but hey */
+* {
+    border-radius: 4px;
+}
+
 html, body {
     margin: 0;
     padding: 0;
@@ -73,6 +78,18 @@ input.text-field:focus{
 
 textarea:focus, input.text-field:focus {
     outline: none;
+}
+
+input#join-room-input::placeholder {
+    text-transform: none;
+}
+
+input#join-room-input {
+    text-transform: uppercase;
+}
+
+input.error {
+    background-color: #f88 !important;
 }
 
 li {
