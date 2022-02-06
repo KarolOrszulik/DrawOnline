@@ -1,9 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway&display=swap');
+
 html, body {
     margin: 0;
     padding: 0;
+
+    min-height: 100vh;
+
+    font-family: 'Raleway', sans-serif;
 }
 
 .wrapper {
     display: grid;
-    grid-template-columns: 300px auto;
+    min-height: 100vh;
+    grid-template-rows: 1fr auto 1fr;
+    grid-template-columns: 1fr auto auto auto 1fr;
+    gap: 2em;
+}
+
+nav, main, aside {
+    background-color: #eee;
+    grid-row: 2;
+    padding: 1em;
+}
+
+nav {
+    grid-column: 2;
+}
+
+main {
+    grid-column: 3;
+}
+
+aside {
+    grid-column: 4;
+}
+
+section {
+    margin-bottom: 2em;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+h2 {
+    font-size: 1.3em;
+}
+
+input {
+    height: 2em;
+    background-color: #ddd;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1em;
+    padding: 2px 8px;
+    border: none;
+    box-sizing: border-box;
+
+}
+
+input.button:hover {
+    cursor: pointer;
+    background-color: #ccc;
+}
+
+input.button:active {
+    background-color: #bbb;
+}
+
+input.text-field:focus{
+    background-color: #ccc;
+}
+
+textarea:focus, input.text-field:focus {
+    outline: none;
+}
+
+li {
+    font-size: 1.1em;
 }
