@@ -36,6 +36,7 @@ io.sockets.on('connection', (socket) => {
         clientsNicknames[socket.id] = newNickname
         console.log(`Socket ${socket.id} now has nickname: ${newNickname}`)
         clientsNicknames.log()
+        emitUsersListUpdate(socket.room)
     })
 
     socket.on('join-room-request', (roomToJoin) => {
@@ -47,10 +48,10 @@ io.sockets.on('connection', (socket) => {
             socket.room = roomToJoin
             socket.join(socket.room)
 
-            const nicknamesInRoom = Array.from(socket.adapter.rooms.get(roomToJoin).values())
-                                         .map(x => clientsNicknames[x])
+            const nicknamesInRoom = getNicknamesInRoom(roomToJoin)
 
             socket.emit('join-room-greenlight', {roomToJoin, nicknamesInRoom})
+            emitUsersListUpdate(socket.room)
         }
         else {
             console.log(`Client ${socket.id} wants to join an NON-EXISTING room ${roomToJoin}`)
@@ -61,10 +62,19 @@ io.sockets.on('connection', (socket) => {
     socket.on('disconnect', (data) => {
         userCount--
         delete clientsNicknames[socket.id]
+        emitUsersListUpdate(socket.room)
         console.log(`${socket.id} a.k.a. ${clientsNicknames[socket.id]} disconnected`)
     })
 
 })
+
+const emitUsersListUpdate = (roomID) => {
+    io.to(roomID).emit('update-users-list', getNicknamesInRoom(roomID))
+}
+
+const getNicknamesInRoom = (room) => {
+    return Array.from(io.sockets.adapter.rooms.get(room).values()).map(x => clientsNicknames[x])
+}
 
 const generateRoomID = (length, taken) => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -78,9 +88,9 @@ const generateRoomID = (length, taken) => {
 
     } while(taken.includes(result))
     
-    
     return result
 }
+
 
 const generateNewNickname = () => {
 

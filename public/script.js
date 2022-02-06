@@ -16,6 +16,11 @@ socket.on('join-room-greenlight', (data) => {
     updateNicknamesList(data.nicknamesInRoom)
 })
 
+socket.on('update-users-list', (users) => {
+    console.log('updating users list...')
+    updateNicknamesList(users)
+})
+
 socket.on('update-user-count', (count) => {
     updateUserCount(count)
 })
@@ -26,6 +31,7 @@ const updateUserCount = (count) => {
 
 const updateNicknamesList = (clients) => {
     const list = document.getElementById('users-list')
+    list.innerHTML = ''
     for(let client of clients) {
         let li = document.createElement('li')
         let text = document.createTextNode(client)
@@ -47,8 +53,11 @@ document.getElementById('nickname-btn').onclick = () => {
 }
 
 document.getElementById('join-room-btn').onclick = () => {
-    const roomToJoin = document.getElementById('join-room-input').value
-    socket.emit('join-room-request', roomToJoin)
+    const roomToJoin = document.getElementById('join-room-input').value.toUpperCase()
+    const currentRoom = document.getElementById('room-id').innerText
+    if(roomToJoin != '' && roomToJoin != currentRoom) {
+        socket.emit('join-room-request', roomToJoin)
+    }
 }
 
 function setup() {
