@@ -16,8 +16,7 @@ socket.on('join-room-greenlight', (data) => {
     updateNicknamesList(data.nicknamesInRoom)
 })
 
-socket.on('update-users-list', (users) => {
-    console.log('updating users list...')
+socket.on('update-nicknames-list', (users) => {
     updateNicknamesList(users)
 })
 
