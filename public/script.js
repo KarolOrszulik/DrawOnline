@@ -14,6 +14,7 @@ socket.on('init', (data) => {
 socket.on('join-room-greenlight', (roomID) => {
     document.getElementById('room-id').innerText = roomID
     document.getElementById('join-room-input').classList.remove('error')
+    linesToDraw = []
 })
 
 
@@ -88,8 +89,54 @@ document.getElementById('join-room-btn').onclick = () => {
 }
 
 
+socket.on('drawing-data', (data) => {
+    linesToDraw = [...new Set([...linesToDraw,...data.linesToAdd])] // union of 2 arrays
+})
+
+
 // p5.js setup function
 function setup() {
     createCanvas(800,600).parent(select('main'))
-    background(0);
+    background(255)
+    
+    setInterval(() => {
+        if(linesToAdd.length > 0 || linesToRemove.length > 0) {
+            socket.emit('drawing-data', {linesToAdd, linesToRemove})
+            linesToAdd = []
+            linesToRemove = []
+        }
+    }, 50);
+}
+
+function draw() {
+    background(255)
+
+    strokeWeight(4)
+    stroke(0)
+    
+    point(mouseX, mouseY)
+    for(let l of linesToDraw) {
+        line(l.x1, l.y1, l.x2, l.y2)
+    }
+}
+
+let lastMousePos = {x: -1, y: -1}
+
+let linesToAdd = []
+let linesToRemove = []
+let linesToDraw = []
+
+function mousePressed() {
+    strokeWeight(4)
+    stroke(0)
+    point(mouseX, mouseY)
+    lastMousePos = {x: mouseX, y: mouseY}
+
+    linesToAdd.push({x1: mouseX, y1: mouseY, x2: mouseX, y2: mouseY})
+}
+
+function mouseDragged() {
+    linesToDraw.push({x1: mouseX, y1: mouseY, x2: lastMousePos.x, y2: lastMousePos.y})
+    linesToAdd.push({x1: lastMousePos.x, y1: lastMousePos.y, x2: mouseX, y2: mouseY})
+    lastMousePos = {x: mouseX, y: mouseY}
 }

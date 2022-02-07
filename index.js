@@ -25,7 +25,7 @@ io.sockets.on('connection', (socket) => {
     userCount++
 
     // generate new room ID and nickname for the new socket
-    const newID = generateRoomID(4, Array.from(socket.adapter.rooms.keys()))
+    const newID = generateRoomID(1, Array.from(socket.adapter.rooms.keys()))
     const newNickname = generateNewNickname()
     console.log(`New socket ID: ${socket.id}; Room ID: ${newID}; Nickname: ${newNickname}`)
 
@@ -73,6 +73,12 @@ io.sockets.on('connection', (socket) => {
         }
     })
 
+
+    socket.on('drawing-data', (data) => {
+        socket.to(socket.room).emit('drawing-data', data)
+    })
+
+
     // handle user disconnecing
     socket.on('disconnect', (data) => {
         // decrement user count
@@ -100,14 +106,6 @@ const emitUpdateNicknamesList = (roomID) => {
         const nicknames = Array.from(room.values()).map(x => clientsNicknames[x])
         io.to(roomID).emit('update-nicknames-list', nicknames)
     }
-}
-
-
-// returns an array of all users' nicknames in a given room
-const getNicknamesInRoom = (roomID) => {
-    const room = io.sockets.adapter.rooms.get(roomID)
-    if (room)
-        return Array.from(room.values()).map(x => clientsNicknames[x])
 }
 
 

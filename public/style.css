@@ -30,6 +30,7 @@ nav, main, aside {
 
 nav {
     grid-column: 2;
+    min-width: 300px;
 }
 
 main {
@@ -60,7 +61,7 @@ input {
     padding: 2px 8px;
     border: none;
     box-sizing: border-box;
-
+    font-weight: bold;
 }
 
 input.button:hover {
@@ -80,16 +81,20 @@ textarea:focus, input.text-field:focus {
     outline: none;
 }
 
+input.text-field.error {
+    background-color: #f88;
+}
+
+input.text-field.error:focus {
+    background-color: #f66;
+}
+
 input#join-room-input::placeholder {
     text-transform: none;
 }
 
 input#join-room-input {
     text-transform: uppercase;
-}
-
-input.error {
-    background-color: #f88 !important;
 }
 
 li {

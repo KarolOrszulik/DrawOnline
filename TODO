@@ -4,4 +4,8 @@ Painting and erasing on canvas
 Joining rooms and seeing everything that has been drawn before
 A settable nickname to be displayed on the sidebar for the whole room to see
 
-update nicknames in clients list when changing nicknames
+implement the drawing part duh:
+
+send changes to server a couple times a second
+
+store 2 arrays: one with lines to add, the other with points to remove (erase)
