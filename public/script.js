@@ -14,7 +14,6 @@ socket.on('init', (data) => {
 socket.on('join-room-greenlight', (roomID) => {
     document.getElementById('room-id').innerText = roomID
     document.getElementById('join-room-input').classList.remove('error')
-    linesToDraw = []
 })
 
 
@@ -89,8 +88,17 @@ document.getElementById('join-room-btn').onclick = () => {
 }
 
 
+document.getElementById('erase-board-btn').onclick = () => {
+    socket.emit('erase-board')
+    linesToDraw = []
+}
+
 socket.on('drawing-data', (data) => {
     linesToDraw = [...new Set([...linesToDraw,...data.linesToAdd])] // union of 2 arrays
+})
+
+socket.on('erase-board', () => {
+    linesToDraw = []
 })
 
 

@@ -78,6 +78,10 @@ io.sockets.on('connection', (socket) => {
         socket.to(socket.room).emit('drawing-data', data)
     })
 
+    socket.on('erase-board', () => {
+        socket.to(socket.room).emit('erase-board')
+    })
+
 
     // handle user disconnecing
     socket.on('disconnect', (data) => {
