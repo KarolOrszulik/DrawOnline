@@ -74,8 +74,8 @@ io.sockets.on('connection', (socket) => {
     })
 
 
-    socket.on('drawing-data', (data) => {
-        socket.to(socket.room).emit('drawing-data', data)
+    socket.on('add-lines', (data) => {
+        socket.to(socket.room).emit('add-lines', data)
     })
 
     socket.on('erase-board', () => {

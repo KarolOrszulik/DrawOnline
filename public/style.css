@@ -18,7 +18,7 @@ html, body {
     display: grid;
     min-height: 100vh;
     grid-template-rows: 1fr auto 1fr;
-    grid-template-columns: 1fr auto auto auto 1fr;
+    grid-template-columns: 1fr repeat(3, auto) 1fr;
     gap: 2em;
 }
 
@@ -53,7 +53,7 @@ h2 {
     font-size: 1.3em;
 }
 
-input {
+input, button {
     height: 2em;
     background-color: #ddd;
     font-family: 'Raleway', sans-serif;
@@ -64,20 +64,20 @@ input {
     font-weight: bold;
 }
 
-input.button:hover {
+.button:hover {
     cursor: pointer;
     background-color: #ccc;
 }
 
-input.button:active {
+.button:active {
     background-color: #bbb;
 }
 
-input.text-field:focus{
+.text-field:focus{
     background-color: #ccc;
 }
 
-textarea:focus, input.text-field:focus {
+textarea:focus, .text-field:focus {
     outline: none;
 }
 
@@ -99,4 +99,9 @@ input#join-room-input {
 
 li {
     font-size: 1.1em;
+}
+
+aside > button {
+    width: 100%;
+    margin-bottom: 1em;
 }

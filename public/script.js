@@ -14,6 +14,7 @@ socket.on('init', (data) => {
 socket.on('join-room-greenlight', (roomID) => {
     document.getElementById('room-id').innerText = roomID
     document.getElementById('join-room-input').classList.remove('error')
+    linesToDraw.clear()
 })
 
 
@@ -90,30 +91,31 @@ document.getElementById('join-room-btn').onclick = () => {
 
 document.getElementById('erase-board-btn').onclick = () => {
     socket.emit('erase-board')
-    linesToDraw = []
+    linesToDraw.clear()
 }
 
-socket.on('drawing-data', (data) => {
-    linesToDraw = [...new Set([...linesToDraw,...data.linesToAdd])] // union of 2 arrays
+socket.on('add-lines', linesToAdd => {
+    const newLines = new Set(linesToAdd)
+    linesToDraw = new Set([...linesToDraw,...newLines]) // union of 2 sets
 })
 
 socket.on('erase-board', () => {
-    linesToDraw = []
+    linesToDraw.clear()
 })
+
+
+setInterval(() => {
+    if(linesToAdd.size > 0) {
+        socket.emit('add-lines', Array.from(linesToAdd))
+        linesToAdd.clear()
+    }
+}, 50);
 
 
 // p5.js setup function
 function setup() {
     createCanvas(800,600).parent(select('main'))
     background(255)
-    
-    setInterval(() => {
-        if(linesToAdd.length > 0 || linesToRemove.length > 0) {
-            socket.emit('drawing-data', {linesToAdd, linesToRemove})
-            linesToAdd = []
-            linesToRemove = []
-        }
-    }, 50);
 }
 
 function draw() {
@@ -130,9 +132,8 @@ function draw() {
 
 let lastMousePos = {x: -1, y: -1}
 
-let linesToAdd = []
-let linesToRemove = []
-let linesToDraw = []
+let linesToAdd = new Set()
+let linesToDraw = new Set()
 
 function mousePressed() {
     strokeWeight(4)
@@ -140,11 +141,21 @@ function mousePressed() {
     point(mouseX, mouseY)
     lastMousePos = {x: mouseX, y: mouseY}
 
-    linesToAdd.push({x1: mouseX, y1: mouseY, x2: mouseX, y2: mouseY})
+    linesToAdd.add({x1: mouseX, y1: mouseY, x2: mouseX, y2: mouseY})
 }
 
 function mouseDragged() {
-    linesToDraw.push({x1: mouseX, y1: mouseY, x2: lastMousePos.x, y2: lastMousePos.y})
-    linesToAdd.push({x1: lastMousePos.x, y1: lastMousePos.y, x2: mouseX, y2: mouseY})
-    lastMousePos = {x: mouseX, y: mouseY}
+    const lineLengthSqared = Math.pow(mouseX-lastMousePos.x, 2) + Math.pow(mouseY-lastMousePos.y, 2)
+
+    if(lineLengthSqared > 4*4) { // lines shorter than 4px are discarded
+        linesToDraw.add({x1: mouseX, y1: mouseY, x2: lastMousePos.x, y2: lastMousePos.y})
+        linesToAdd.add({x1: lastMousePos.x, y1: lastMousePos.y, x2: mouseX, y2: mouseY})
+        lastMousePos = {x: mouseX, y: mouseY}
+    }
+}
+
+class Stroke {
+    constructor() {
+        
+    }
 }
